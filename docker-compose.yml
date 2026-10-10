@@ -1,0 +1,27 @@
+# Option B (Docker). Option A (no Docker) is in README.md.
+#   docker compose up -d db          -> only PostgreSQL; run the app normally with DATABASE_URL below
+#   docker compose up --build        -> PostgreSQL + the app on http://localhost:5001
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: studyai
+      POSTGRES_PASSWORD: studyai
+      POSTGRES_DB: studyai
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U studyai"]
+      interval: 5s
+      retries: 10
+  app:
+    build: .
+    depends_on:
+      db: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgresql://studyai:studyai@db:5432/studyai
+      SECRET_KEY: ${SECRET_KEY:-local-docker-secret-change-me}
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+    ports: ["5001:5001"]
+volumes:
+  pgdata:

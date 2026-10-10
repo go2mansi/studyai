@@ -1,0 +1,12 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.db
+*.sqlite3
+uploads/
+.vercel/
+.idea/
+.vscode/
+node_modules/

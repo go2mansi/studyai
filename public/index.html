@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>StudyAI</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div id="toasts" class="toasts" aria-live="polite"></div>
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-box" id="modal-box"></div></div>
+
+<div id="boot" class="center muted">Loading StudyAI…</div>
+
+<div id="auth" class="auth hidden">
+  <form class="authbox card" id="auth-form" novalidate>
+    <div class="logo"><span>✦</span>StudyAI</div>
+    <div class="tabs" role="tablist"><button type="button" class="tab active" data-auth="login">Login</button><button type="button" class="tab" data-auth="signup">Create account</button></div>
+    <div class="field hidden" id="name-field"><label for="name">Name</label><input id="name" autocomplete="name"></div>
+    <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email"></div>
+    <div class="field"><label for="password">Password <span class="muted small">(minimum 8 characters)</span></label><input id="password" type="password" autocomplete="current-password"></div>
+    <button class="primary block" id="auth-btn" type="submit">Login</button>
+    <p id="auth-msg" class="err small" role="alert"></p>
+  </form>
+</div>
+
+<div id="app" class="shell hidden">
+  <aside class="side" id="side">
+    <div class="logo"><span>✦</span>StudyAI</div>
+    <div class="searchbox"><input id="global-search" class="search" placeholder="Search…" aria-label="Search" autocomplete="off"><div id="search-results" class="search-results hidden"></div></div>
+    <nav class="nav" id="nav">
+      <button data-page="dashboard">⌂ Dashboard</button>
+      <button data-page="library">▣ My Library</button>
+      <button data-page="tutor">◈ AI Tutor</button>
+      <button data-page="notes">✎ AI Notes</button>
+      <button data-page="quiz">✓ Practice Quiz</button>
+      <button data-page="flash">◇ Flashcards</button>
+      <button data-page="planner">◫ Study Planner</button>
+      <button data-page="tracker">◉ Study Tracker</button>
+      <button data-page="coach">★ AI Study Coach</button>
+      <button data-page="profile">⚙ Profile</button>
+    </nav>
+    <button class="secondary block" data-action="logout">Logout</button>
+  </aside>
+  <main class="content">
+    <div class="top"><button class="secondary menu-btn" data-action="menu" aria-label="Menu">☰</button><div><div class="eyebrow">Personal learning workspace</div><h1 id="title">Dashboard</h1></div><div class="pill" id="user-pill"></div></div>
+
+    <section id="dashboard" class="section">
+      <div class="card hero"><div class="eyebrow">AI-powered learning</div><h2 id="welcome">Welcome</h2><p class="muted">Upload your material, learn with the AI Tutor, practise with quizzes and track your progress.</p><div class="actions"><button class="primary" data-go="library">Open Library</button><button class="secondary" data-go="coach">Today's recommendation</button></div></div>
+      <div class="grid four mt" id="stats"></div>
+      <div class="grid two mt">
+        <div class="card"><div class="eyebrow">Study minutes · last 14 days</div><div id="chart"></div></div>
+        <div class="card"><div class="eyebrow">Today's goal</div><h3 id="goal-text">—</h3><div class="progress"><div id="goalbar"></div></div><p class="muted small">Daily goal comes from your profile. Every tutor question, quiz answer and completed plan task counts.</p><div class="eyebrow mt">Achievements</div><div id="badges"></div></div>
+      </div>
+      <div class="grid two mt">
+        <div class="card"><div class="eyebrow">Recent activity</div><div id="recent"></div></div>
+        <div class="card"><div class="eyebrow">Weakest topics</div><div id="dash-topics"></div></div>
+      </div>
+    </section>
+
+    <section id="library" class="section">
+      <div class="card"><div class="eyebrow">Knowledge base</div><h2>My Library</h2>
+        <div class="drop" id="drop"><input id="file" type="file" accept=".pdf,.txt,.md" hidden><p>Drag a PDF, TXT or Markdown file here or <button class="link" data-action="pick">browse</button></p><p class="muted small" id="max-size"></p></div>
+        <div class="actions mt"><span id="file-name" class="muted small"></span><button class="primary" id="upload-btn" data-action="upload">Upload &amp; index</button></div></div>
+      <div class="card mt"><div class="eyebrow">Your documents</div><div id="docs"></div></div>
+    </section>
+
+    <section id="tutor" class="section"><div class="card chat">
+      <div class="actions"><select id="tutor-doc" data-doc aria-label="Document"></select><select id="mode" aria-label="Answer style"><option value="normal">Normal</option><option value="simple">Explain simply</option><option value="detailed">Detailed</option><option value="exam">Exam answer</option><option value="compare">Compare</option></select><button class="secondary" data-action="clear-chat">Clear chat</button></div>
+      <div id="chatlog" class="chatlog"></div>
+      <div class="chatbar"><input id="chat" placeholder="Ask a question about your document…" autocomplete="off" maxlength="2000"><button id="send-btn" class="send-btn" data-action="send" aria-label="Send question">↑</button></div></div></section>
+
+    <section id="notes" class="section"><div class="grid two">
+      <div class="card"><div class="eyebrow">AI Notes Generator</div><h2>Generate study notes</h2><select id="notes-doc" data-doc aria-label="Document"></select>
+        <div class="field"><label for="notes-request">What do you want to learn?</label><textarea id="notes-request" placeholder="Example: Explain process scheduling in exam-ready notes."></textarea></div>
+        <button class="primary" data-action="make-notes" id="notes-btn">Generate notes</button></div>
+      <div class="card"><div class="eyebrow">Output</div><div id="notes-out" class="note muted">Generated notes appear here.</div><div id="notes-actions" class="actions"></div></div></div>
+      <div class="card mt"><div class="eyebrow">Saved notes</div><div id="notes-list"></div></div></section>
+
+    <section id="quiz" class="section">
+      <div class="card"><div class="eyebrow">Practice</div><h2>Interactive quiz</h2>
+        <div class="grid three"><div class="field"><label>Document</label><select id="quiz-doc" data-doc></select></div><div class="field"><label>Questions</label><select id="quiz-count"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></div><div class="field"><label>Difficulty</label><select id="quiz-diff"><option>easy</option><option selected>medium</option><option>hard</option></select></div></div>
+        <button class="primary" data-action="start-quiz" id="quiz-btn">Generate quiz</button></div>
+      <div id="quizbox" class="mt"></div>
+      <div class="card mt"><div class="eyebrow">Quiz history</div><div id="quiz-list"></div></div></section>
+
+    <section id="flash" class="section"><div class="grid two">
+      <div class="card"><div class="eyebrow">Revision</div><h2>AI flashcards</h2><select id="flash-doc" data-doc></select>
+        <div class="field"><label>Cards</label><select id="flash-count"><option>5</option><option selected>10</option><option>15</option><option>20</option></select></div>
+        <button class="primary" data-action="make-flash" id="flash-btn">Generate deck</button>
+        <div class="eyebrow mt">Saved decks</div><div id="deck-list"></div></div>
+      <div class="card"><div id="flashcard" class="flash" tabindex="0" data-action="flip" aria-label="Flashcard, press to flip"><div class="muted">Generate or open a deck to start.</div></div>
+        <div class="actions center-row mt"><button class="secondary" data-action="prev-card">←</button><button class="secondary" data-action="flip">Flip</button><button class="secondary" data-action="next-card">→</button></div></div></div></section>
+
+    <section id="planner" class="section">
+      <div class="card"><div class="eyebrow">Planning</div><h2>AI study planner</h2>
+        <div class="grid four"><div class="field"><label>Document</label><select id="plan-doc" data-doc></select></div><div class="field"><label>Days</label><select id="plan-days"><option>3</option><option selected>5</option><option>7</option><option>10</option><option>14</option></select></div><div class="field"><label>Start date</label><input id="plan-start" type="date"></div><div class="field"><label>Minutes per day</label><input id="plan-minutes" type="number" min="10" max="600" value="120"></div></div>
+        <button class="primary" data-action="make-plan" id="plan-btn">Generate plan</button></div>
+      <div id="plan-list" class="mt"></div></section>
+
+    <section id="tracker" class="section"><div class="grid two">
+      <div class="card"><div class="eyebrow">Consistency</div><h2 id="streak-big">0 day streak</h2><p class="muted">Longest streak: <span id="longest">0</span> days</p><div id="tracker-stats"></div></div>
+      <div class="card"><div class="eyebrow">Achievements</div><div id="tracker-badges"></div><p class="muted small">Streak badges need 10, 20 and 30 consecutive active days. Quiz Master needs 90%+ accuracy over at least 10 answered questions.</p></div></div>
+      <div class="card mt"><div class="eyebrow">Topic performance (from quizzes)</div><div id="topics"></div></div></section>
+
+    <section id="coach" class="section"><div class="card"><div class="eyebrow">Personalized AI</div><h2>AI study coach</h2><p class="muted">The coach reads your profile, study minutes, quiz accuracy, streak and weak topics, then suggests what to do next.</p><button class="primary" data-action="coach" id="coach-btn">Generate today's recommendation</button><div id="coach-out" class="note mt"></div></div></section>
+
+    <section id="profile" class="section"><div class="card"><div class="eyebrow">Personalization</div><h2>Learning profile</h2>
+      <div class="grid two"><div class="field"><label for="p-course">Course</label><input id="p-course" maxlength="80"></div><div class="field"><label for="p-lang">Preferred language</label><input id="p-lang" maxlength="40"></div>
+      <div class="field"><label for="p-style">Explanation style</label><select id="p-style"><option>Detailed</option><option>Simple</option><option>Exam-focused</option></select></div>
+      <div class="field"><label for="p-min">Daily study minutes</label><input id="p-min" type="number" min="10" max="600"></div><div class="field"><label for="p-exam">Exam date</label><input id="p-exam" type="date"></div></div>
+      <button class="primary" data-action="save-profile">Save profile</button></div></section>
+  </main>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
